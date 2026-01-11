@@ -1,0 +1,66 @@
+@LSA.OrderFlow.Api_HostAddress = https://localhost:7069
+
+### Health Check
+GET {{LSA.OrderFlow.Api_HostAddress}}/health
+Accept: application/json
+
+###
+
+### List Orders (paginated)
+GET {{LSA.OrderFlow.Api_HostAddress}}/api/orders?page=1&pageSize=10
+Accept: application/json
+X-Correlation-Id: {{$guid}}
+
+###
+
+### Get Order by ID
+GET {{LSA.OrderFlow.Api_HostAddress}}/api/orders/REPLACE_WITH_ORDER_ID
+Accept: application/json
+X-Correlation-Id: {{$guid}}
+
+###
+
+### Create Order
+POST {{LSA.OrderFlow.Api_HostAddress}}/api/orders
+Content-Type: application/json
+X-Correlation-Id: {{$guid}}
+
+{
+  "customerId": "REPLACE_WITH_CUSTOMER_ID",
+  "items": [
+    {
+      "productId": "REPLACE_WITH_PRODUCT_ID",
+      "quantity": 2
+    }
+  ]
+}
+
+###
+
+### Update Order
+PUT {{LSA.OrderFlow.Api_HostAddress}}/api/orders/REPLACE_WITH_ORDER_ID
+Content-Type: application/json
+X-Correlation-Id: {{$guid}}
+
+{
+  "items": [
+    {
+      "productId": "REPLACE_WITH_PRODUCT_ID",
+      "quantity": 5
+    }
+  ]
+}
+
+###
+
+### Cancel Order
+POST {{LSA.OrderFlow.Api_HostAddress}}/api/orders/REPLACE_WITH_ORDER_ID/cancel
+X-Correlation-Id: {{$guid}}
+
+###
+
+### Delete Order
+DELETE {{LSA.OrderFlow.Api_HostAddress}}/api/orders/REPLACE_WITH_ORDER_ID
+X-Correlation-Id: {{$guid}}
+
+###
