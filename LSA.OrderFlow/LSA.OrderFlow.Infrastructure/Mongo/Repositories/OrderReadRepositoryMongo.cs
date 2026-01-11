@@ -25,29 +25,51 @@ namespace LSA.OrderFlow.Infrastructure.Mongo.Repositories
         }
 
 
-        public async Task<PagedList<OrderListItemVm>> ListAsync(int page, int pageSize, string? search, CancellationToken ct)
-        {
-			var notCancelled = Builders<OrderRead>.Filter.Ne(x => x.Status, "Cancelled");
+		public async Task<PagedList<OrderListItemVm>> ListAsync(int page, int pageSize, string? search, CancellationToken ct)
+		{
+			if (page <= 0) page = 1;
+			if (pageSize <= 0) pageSize = 20;
 
-			var searchFilter = string.IsNullOrWhiteSpace(search)
-				? Builders<OrderRead>.Filter.Empty
-				: Builders<OrderRead>.Filter.Or(
-					Builders<OrderRead>.Filter.Regex(x => x.Status, new(search, "i")),
-					Builders<OrderRead>.Filter.Regex(x => x.CustomerId.ToString(), new(search, "i"))
-				);
+			var f = Builders<OrderRead>.Filter;
 
-			var filter = Builders<OrderRead>.Filter.And(notCancelled, searchFilter);
+			var notCancelled = f.Ne(x => x.Status, "Cancelled");
+
+			FilterDefinition<OrderRead> searchFilter;
+
+			if (string.IsNullOrWhiteSpace(search))
+			{
+				searchFilter = f.Empty;
+			}
+			else
+			{
+				search = search.Trim();
+
+				if (Guid.TryParse(search, out var guid))
+				{
+					searchFilter = f.Or(
+						f.Eq(x => x.Id, guid),
+						f.Eq(x => x.CustomerId, guid)
+					);
+				}
+				else
+				{
+					searchFilter = f.Regex(x => x.Status, new MongoDB.Bson.BsonRegularExpression(search, "i"));
+				}
+			}
+
+			var filter = f.And(notCancelled, searchFilter);
 
 			var total = await _collection.CountDocumentsAsync(filter, cancellationToken: ct);
-            var items = await _collection.Find(filter)
-            .SortByDescending(x => x.OrderDate)
-            .Skip((page - 1) * pageSize)
-            .Limit(pageSize)
-            .Project(x => new OrderListItemVm(x.Id, x.CustomerId, x.OrderDate, x.Status, x.TotalAmount))
-            .ToListAsync(ct);
 
+			var items = await _collection.Find(filter)
+				.SortByDescending(x => x.OrderDate)
+				.Skip((page - 1) * pageSize)
+				.Limit(pageSize)
+				.Project(x => new OrderListItemVm(x.Id, x.CustomerId, x.OrderDate, x.Status, x.TotalAmount))
+				.ToListAsync(ct);
 
-            return new PagedList<OrderListItemVm>(items, page, pageSize, total);
-        }
-    }
+			return new PagedList<OrderListItemVm>(items, page, pageSize, total);
+		}
+
+	}
 }
