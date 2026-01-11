@@ -1,0 +1,18 @@
+<Solution>
+  <Folder Name="/1 - Api/">
+    <Project Path="LSA.OrderFlow.Api/LSA.OrderFlow.Api.csproj" Id="0ee2c1ea-ff5f-49bd-aa1c-9e017521db27" />
+  </Folder>
+  <Folder Name="/2 - Application/">
+    <Project Path="LSA.OrderFlow.Application/LSA.OrderFlow.Application.csproj" />
+  </Folder>
+  <Folder Name="/3 - Domain/">
+    <Project Path="LSA.OrderFlow.Domain/LSA.OrderFlow.Domain.csproj" />
+  </Folder>
+  <Folder Name="/4 - Infrastructure/">
+    <Project Path="LSA.OrderFlow.Infrastructure/LSA.OrderFlow.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/5 - CrossCutting/">
+    <Project Path="LSA.OrderFlow.CrossCutting/LSA.OrderFlow.CrossCutting.csproj" />
+  </Folder>
+  <Folder Name="/Tests/" />
+</Solution>
